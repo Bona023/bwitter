@@ -5,5 +5,6 @@ declare module "styled-components" {
         bodyBg: string;
         text: string;
         btnBg: string;
+        pointColor: string;
     }
 }
