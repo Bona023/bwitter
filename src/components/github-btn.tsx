@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 const Button = styled.div`
     margin-top: 50px;
-    background-color: ${(props) => props.theme.btnBg};
+    background-color: ${(props) => props.theme.btnBgD};
     font-weight: 500;
     width: 100%;
-    color: ${(props) => props.theme.bodyBg};
+    color: ${(props) => props.theme.text};
     padding: 10px 20px;
     border-radius: 50px;
     border: 0;

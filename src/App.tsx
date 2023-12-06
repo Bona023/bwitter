@@ -50,6 +50,9 @@ const GlobalStyles = createGlobalStyle`
         color:${(props) => props.theme.text};
         font-family: 'Sunflower', sans-serif;
     }
+    ::-webkit-scrollbar {
+        display:none;
+    }
 `;
 const Wrapper = styled.div`
     height: 100vh;

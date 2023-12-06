@@ -44,14 +44,14 @@ const BtnBox = styled.div`
     }
 `;
 const AttachFileBtn = styled.label`
-    background-color: ${(props) => props.theme.btnBg};
+    background-color: ${(props) => props.theme.btnBgD};
     border-radius: 5px;
     padding: 10px;
     font-size: 16px;
-    color: ${(props) => props.theme.bodyBg};
+    color: ${(props) => props.theme.text};
     cursor: pointer;
     &:hover {
-        background-color: ${(props) => props.theme.accentColor};
+        background-color: ${(props) => props.theme.btnBgL};
     }
 `;
 const AttachFileInput = styled.input`
@@ -61,14 +61,14 @@ const SubmitBtn = styled.input`
     font-size: 16px;
     font-family: "Sunflower", sans-serif;
     border: none;
-    background-color: ${(props) => props.theme.btnBg};
+    background-color: ${(props) => props.theme.btnBgD};
     border-radius: 5px;
     padding: 10px;
     line-height: 1;
-    color: ${(props) => props.theme.bodyBg};
+    color: ${(props) => props.theme.text};
     cursor: pointer;
     &:hover {
-        background-color: ${(props) => props.theme.accentColor};
+        background-color: ${(props) => props.theme.btnBgL};
     }
 `;
 
@@ -95,7 +95,7 @@ export default function PostTweetForm() {
         }
         try {
             setLoading(true);
-            const doc = await addDoc(collection(db, "tweet"), {
+            const doc = await addDoc(collection(db, "tweets"), {
                 tweet,
                 createAt: Date.now(),
                 writer: user.displayName || "Anonymous",

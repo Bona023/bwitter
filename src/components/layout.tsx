@@ -7,6 +7,7 @@ const Wrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr 3fr 1.5fr;
     grid-gap: 10px;
+    padding: 0 50px;
 `;
 const MenuList = styled.div`
     padding-top: 100px;

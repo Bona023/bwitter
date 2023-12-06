@@ -22,7 +22,7 @@ export const Form = styled.form`
 `;
 export const Input = styled.input`
     font-family: "Sunflower", sans-serif;
-    background-color: #e5e0ff;
+    background-color: ${(props) => props.theme.inputBg};
     padding: 10px 20px;
     border-radius: 50px;
     border: none;
@@ -30,11 +30,15 @@ export const Input = styled.input`
     font-size: 18px;
     &[type="submit"] {
         color: ${(props) => props.theme.bodyBg};
-        background-color: ${(props) => props.theme.text};
+        background-color: ${(props) => props.theme.btnBgD};
         cursor: pointer;
         &:hover {
-            background-color: ${(props) => props.theme.btnBg};
+            background-color: ${(props) => props.theme.btnBgL};
+            color: ${(props) => props.theme.text};
         }
+    }
+    &:focus {
+        outline: none;
     }
 `;
 export const Error = styled.span`
