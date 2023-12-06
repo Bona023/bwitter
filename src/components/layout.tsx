@@ -5,7 +5,7 @@ import { auth } from "../firebase";
 const Wrapper = styled.div`
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: 1fr 3fr 1.5fr;
     grid-gap: 10px;
 `;
 const MenuList = styled.div`
@@ -39,6 +39,10 @@ const Menu = styled.div`
 const MLink = styled(Link)`
     text-decoration: none;
     color: ${(props) => props.theme.text};
+`;
+const Recommendation = styled.div`
+    box-shadow: -5px 0px 7px -7px rgba(0, 0, 0, 0.5);
+    width: 100%;
 `;
 
 export default function Layout() {
@@ -101,6 +105,7 @@ export default function Layout() {
                 </Menu>
             </MenuList>
             <Outlet />
+            <Recommendation />
         </Wrapper>
     );
 }
