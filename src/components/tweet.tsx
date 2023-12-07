@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { ITweet } from "./timeline";
 import { auth, db, storage } from "../firebase";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Wrapper = styled.div`
     background-color: ${(props) => props.theme.tweetBg};
@@ -84,6 +84,50 @@ const EditBtn = styled.input`
         background-color: ${(props) => props.theme.btnBgL};
     }
 `;
+const PhotoEditForm = styled.form`
+    margin: 15px 0;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 5px;
+`;
+const AttachFileInfo = styled.span`
+    font-size: 15px;
+    font-weight: 500;
+    max-height: 40px;
+    max-width: 370px;
+    overflow-x: hidden;
+    line-height: 1.1;
+`;
+const AttachFileBtn = styled.label`
+    background-color: ${(props) => props.theme.btnBgD};
+    border-radius: 5px;
+    padding: 7px 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: ${(props) => props.theme.text};
+    cursor: pointer;
+    &:hover {
+        background-color: ${(props) => props.theme.btnBgL};
+    }
+`;
+const PhotoEditBtn = styled.input`
+    font-size: 14px;
+    font-family: "Sunflower", sans-serif;
+    border: none;
+    background-color: ${(props) => props.theme.btnBgD};
+    border-radius: 5px;
+    padding: 7px 10px;
+    line-height: 1;
+    color: ${(props) => props.theme.text};
+    cursor: pointer;
+    &:hover {
+        background-color: ${(props) => props.theme.btnBgL};
+    }
+`;
+const AttachFileInput = styled.input`
+    display: none;
+`;
 const Photo = styled.img`
     border-radius: 10px;
     width: 100%;
@@ -104,13 +148,18 @@ const Icons = styled.div`
         &.tweetDel {
             color: red;
         }
+        &:hover {
+            color: ${(props) => props.theme.bodyBg};
+        }
     }
 `;
 
 export default function Tweet({ photo, tweet, writer, userId, createAt, id }: ITweet) {
     const user = auth.currentUser;
     const [edit, setEdit] = useState(false);
+    const [photoEdit, setPhotoEdit] = useState(false);
     const [blah, setBlah] = useState(tweet);
+    const [file, setFile] = useState<File | null>(null);
     const [isLoading, setLoading] = useState(false);
     const createTime = () => {
         const msc = Date.now() - createAt;
@@ -138,7 +187,7 @@ export default function Tweet({ photo, tweet, writer, userId, createAt, id }: IT
             //
         }
     };
-    const openMod = () => {
+    const openEdit = () => {
         if (edit) {
             setEdit(false);
             setBlah(tweet);
@@ -151,11 +200,43 @@ export default function Tweet({ photo, tweet, writer, userId, createAt, id }: IT
     };
     const tweetModify = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (user?.uid !== userId || isLoading || tweet === "" || tweet.length > 180) return;
         try {
             setLoading(true);
             await updateDoc(doc(db, "tweets", id), { tweet: blah });
             setBlah("");
             setEdit(false);
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const openPhotoEdit = () => {
+        setPhotoEdit((prev) => !prev);
+    };
+    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        if (files && files.length === 1) {
+            setFile(files[0]);
+        }
+    };
+    const photoModify = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (user?.uid !== userId || file === null || isLoading) return;
+        if (file && file.size > 2097152) {
+            alert("이미지 크기는 최대 2MB 입니다.");
+            return;
+        }
+        try {
+            setLoading(true);
+            if (file) {
+                const locationRef = ref(storage, `tweets/${user.uid}/${id}`);
+                const result = await uploadBytes(locationRef, file);
+                const url = await getDownloadURL(result.ref);
+                await updateDoc(doc(db, "tweets", id), { photo: url });
+            }
+            setPhotoEdit(false);
         } catch (e) {
             console.log(e);
         } finally {
@@ -186,23 +267,52 @@ export default function Tweet({ photo, tweet, writer, userId, createAt, id }: IT
                 ) : (
                     <Blah>{tweet}</Blah>
                 )}
+                {photoEdit ? (
+                    <PhotoEditForm onSubmit={photoModify}>
+                        {file ? (
+                            <AttachFileInfo>
+                                파일명 : {file.name} <br /> 크기 :
+                                {file.size < 1024
+                                    ? file.size + "bytes"
+                                    : file.size < 1048576
+                                    ? (file.size / 1024).toFixed(1) + "KB"
+                                    : file.size >= 1048576
+                                    ? (file.size / 1048576).toFixed(1) + "MB"
+                                    : null}
+                            </AttachFileInfo>
+                        ) : null}
+                        <AttachFileBtn htmlFor="photo">사진 추가</AttachFileBtn>
+                        <AttachFileInput
+                            type="file"
+                            onChange={onFileChange}
+                            id="photo"
+                            accept="image/*"
+                        />
+                        <PhotoEditBtn
+                            type="submit"
+                            value={isLoading ? "로딩중..." : "사진 수정하기"}
+                        />
+                    </PhotoEditForm>
+                ) : null}
                 {photo ? <Photo src={photo} /> : null}
             </Contents>
             <Icons>
-                <svg
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                    />
-                </svg>
+                {user?.uid !== userId ? (
+                    <svg
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                        />
+                    </svg>
+                ) : null}
                 <svg
                     fill="none"
                     stroke="currentColor"
@@ -219,7 +329,22 @@ export default function Tweet({ photo, tweet, writer, userId, createAt, id }: IT
                 </svg>
                 {user?.uid === userId ? (
                     <svg
-                        onClick={openMod}
+                        onClick={openPhotoEdit}
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                    >
+                        <path
+                            clipRule="evenodd"
+                            fillRule="evenodd"
+                            d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
+                        />
+                    </svg>
+                ) : null}
+                {user?.uid === userId ? (
+                    <svg
+                        onClick={openEdit}
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
