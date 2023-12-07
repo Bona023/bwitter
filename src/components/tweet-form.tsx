@@ -5,6 +5,9 @@ import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Form = styled.form`
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
     display: flex;
     flex-direction: column;
 `;
