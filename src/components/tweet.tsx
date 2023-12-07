@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { ITweet } from "./timeline";
 import { auth, db, storage } from "../firebase";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteDoc, deleteField, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Wrapper = styled.div`
@@ -128,9 +128,30 @@ const PhotoEditBtn = styled.input`
 const AttachFileInput = styled.input`
     display: none;
 `;
+const PhotoBox = styled.div`
+    position: relative;
+`;
 const Photo = styled.img`
     border-radius: 10px;
     width: 100%;
+`;
+const PhotoDelBtn = styled.div`
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 20px;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+`;
+const Spot = styled.div`
+    width: 5px;
+    height: 5px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.4);
 `;
 const Icons = styled.div`
     width: 100%;
@@ -243,6 +264,23 @@ export default function Tweet({ photo, tweet, writer, userId, createAt, id }: IT
             setLoading(false);
         }
     };
+    const photoDel = async () => {
+        const ok = confirm("이 이미지를 삭제 하시겠습니까?");
+        if (!ok || user?.uid !== userId) return;
+        try {
+            await updateDoc(doc(db, "tweets", id), { photo: deleteField() });
+            if (photo) {
+                const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
+                await deleteObject(photoRef);
+            }
+            const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
+            await deleteObject(photoRef);
+        } catch (e) {
+            console.log(e);
+        } finally {
+            //
+        }
+    };
     return (
         <Wrapper>
             <UserProfile>
@@ -294,7 +332,18 @@ export default function Tweet({ photo, tweet, writer, userId, createAt, id }: IT
                         />
                     </PhotoEditForm>
                 ) : null}
-                {photo ? <Photo src={photo} /> : null}
+                {photo ? (
+                    <PhotoBox>
+                        {user?.uid === userId ? (
+                            <PhotoDelBtn onClick={photoDel}>
+                                <Spot />
+                                <Spot />
+                                <Spot />
+                            </PhotoDelBtn>
+                        ) : null}
+                        <Photo src={photo} />
+                    </PhotoBox>
+                ) : null}
             </Contents>
             <Icons>
                 {user?.uid !== userId ? (
