@@ -74,14 +74,15 @@ const EditBtn = styled.input`
     font-size: 14px;
     font-family: "Sunflower", sans-serif;
     border: none;
-    background-color: ${(props) => props.theme.btnBgD};
+    background-color: ${(props) => props.theme.btnBgNormal};
     border-radius: 5px;
     padding: 10px;
     line-height: 1;
     color: ${(props) => props.theme.text};
     cursor: pointer;
     &:hover {
-        background-color: ${(props) => props.theme.btnBgL};
+        background-color: ${(props) => props.theme.btnBgActive};
+        color: ${(props) => props.theme.tweetAccent};
     }
 `;
 const PhotoEditForm = styled.form`
@@ -100,7 +101,7 @@ const AttachFileInfo = styled.span`
     line-height: 1.1;
 `;
 const AttachFileBtn = styled.label`
-    background-color: ${(props) => props.theme.btnBgD};
+    background-color: ${(props) => props.theme.btnBgNormal};
     border-radius: 5px;
     padding: 7px 10px;
     font-size: 14px;
@@ -108,21 +109,23 @@ const AttachFileBtn = styled.label`
     color: ${(props) => props.theme.text};
     cursor: pointer;
     &:hover {
-        background-color: ${(props) => props.theme.btnBgL};
+        background-color: ${(props) => props.theme.btnBgActive};
+        color: ${(props) => props.theme.tweetAccent};
     }
 `;
 const PhotoEditBtn = styled.input`
     font-size: 14px;
     font-family: "Sunflower", sans-serif;
     border: none;
-    background-color: ${(props) => props.theme.btnBgD};
+    background-color: ${(props) => props.theme.btnBgNormal};
     border-radius: 5px;
     padding: 7px 10px;
     line-height: 1;
     color: ${(props) => props.theme.text};
     cursor: pointer;
     &:hover {
-        background-color: ${(props) => props.theme.btnBgL};
+        background-color: ${(props) => props.theme.btnBgActive};
+        color: ${(props) => props.theme.tweetAccent};
     }
 `;
 const AttachFileInput = styled.input`
@@ -164,13 +167,13 @@ const Icons = styled.div`
     svg {
         width: 30px;
         cursor: pointer;
-        color: ${(props) => props.theme.tweetAccent};
+        color: ${(props) => props.theme.tweetIcon};
         stroke-width: 2.5px;
         &.tweetDel {
             color: red;
         }
         &:hover {
-            color: ${(props) => props.theme.bodyBg};
+            color: ${(props) => props.theme.tweetAccent};
         }
     }
 `;

@@ -47,14 +47,15 @@ const BtnBox = styled.div`
     }
 `;
 const AttachFileBtn = styled.label`
-    background-color: ${(props) => props.theme.btnBgD};
+    background-color: ${(props) => props.theme.btnBgNormal};
     border-radius: 5px;
     padding: 10px;
     font-size: 16px;
     color: ${(props) => props.theme.text};
     cursor: pointer;
     &:hover {
-        background-color: ${(props) => props.theme.btnBgL};
+        background-color: ${(props) => props.theme.btnBgActive};
+        color: ${(props) => props.theme.tweetAccent};
     }
 `;
 const AttachFileInput = styled.input`
@@ -64,14 +65,15 @@ const SubmitBtn = styled.input`
     font-size: 16px;
     font-family: "Sunflower", sans-serif;
     border: none;
-    background-color: ${(props) => props.theme.btnBgD};
+    background-color: ${(props) => props.theme.btnBgNormal};
     border-radius: 5px;
     padding: 10px;
     line-height: 1;
     color: ${(props) => props.theme.text};
     cursor: pointer;
     &:hover {
-        background-color: ${(props) => props.theme.btnBgL};
+        background-color: ${(props) => props.theme.btnBgActive};
+        color: ${(props) => props.theme.tweetAccent};
     }
 `;
 

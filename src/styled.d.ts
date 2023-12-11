@@ -4,13 +4,13 @@ declare module "styled-components" {
     export interface DefaultTheme {
         bodyBg: string;
         text: string;
-        btnBgD: string;
-        btnBgL: string;
+        btnBgNormal: string;
+        btnBgActive: string;
         pointColor: string;
         inputBg: string;
         accentColor: string;
         tweetBg: string;
-        tweetText: string;
+        tweetIcon: string;
         tweetAccent: string;
     }
 }

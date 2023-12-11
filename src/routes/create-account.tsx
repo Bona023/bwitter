@@ -76,7 +76,7 @@ export default function CreateAccount() {
             </Form>
             {error !== "" ? <Error>{error}</Error> : null}
             <Switcher>
-                Already have an account? <Link to="/login">Log in &rarr;</Link>
+                이미 계정이 있으신가요? <Link to="/login">Log in &rarr;</Link>
             </Switcher>
         </Wrapper>
     );

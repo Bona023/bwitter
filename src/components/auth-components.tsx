@@ -29,12 +29,12 @@ export const Input = styled.input`
     width: 100%;
     font-size: 18px;
     &[type="submit"] {
-        color: ${(props) => props.theme.bodyBg};
-        background-color: ${(props) => props.theme.btnBgD};
+        color: ${(props) => props.theme.text};
+        background-color: ${(props) => props.theme.btnBgNormal};
         cursor: pointer;
         &:hover {
-            background-color: ${(props) => props.theme.btnBgL};
-            color: ${(props) => props.theme.text};
+            background-color: ${(props) => props.theme.btnBgActive};
+            color: ${(props) => props.theme.tweetAccent};
         }
     }
     &:focus {

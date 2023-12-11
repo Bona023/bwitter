@@ -41,6 +41,14 @@ const MLink = styled(Link)`
     text-decoration: none;
     color: ${(props) => props.theme.text};
 `;
+const UserInfo = styled.div`
+    background-color: yellow;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    margin-top: 50px;
+`;
 const Recommendation = styled.div`
     box-shadow: -5px 0px 7px -7px rgba(0, 0, 0, 0.5);
     width: 100%;
@@ -104,6 +112,7 @@ export default function Layout() {
                     </svg>
                     <span>로그아웃</span>
                 </Menu>
+                <UserInfo>사용자 : {auth.currentUser?.displayName ?? "익명"}</UserInfo>
             </MenuList>
             <Outlet />
             <Recommendation />

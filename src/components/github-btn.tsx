@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const Button = styled.div`
     margin-top: 50px;
-    background-color: ${(props) => props.theme.btnBgD};
+    background-color: ${(props) => props.theme.btnBgNormal};
     font-weight: 500;
     width: 100%;
     color: ${(props) => props.theme.text};
@@ -17,6 +17,10 @@ const Button = styled.div`
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    &:hover {
+        background-color: ${(props) => props.theme.btnBgActive};
+        color: ${(props) => props.theme.tweetAccent};
+    }
 `;
 const Logo = styled.img`
     height: 25px;
