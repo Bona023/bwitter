@@ -11,4 +11,7 @@ export const lightTheme: DefaultTheme = {
     tweetBg: "#9BCDD2",
     tweetIcon: "#FF8551",
     tweetAccent: "#F9F9F9",
+    myTweetsTab: "#FFFEB7",
+    myLikesTab: "#ff9494",
+    myReplyTab: "#ffd9c0",
 };

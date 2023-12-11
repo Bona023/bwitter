@@ -12,5 +12,8 @@ declare module "styled-components" {
         tweetBg: string;
         tweetIcon: string;
         tweetAccent: string;
+        myTweetsTab: string;
+        myLikesTab: string;
+        myReplyTab: string;
     }
 }

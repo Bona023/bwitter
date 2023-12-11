@@ -178,7 +178,7 @@ const Icons = styled.div`
     }
 `;
 
-export default function Tweet({ photo, tweet, writer, userId, createAt, id }: ITweet) {
+export default function Tweet({ photo, tweet, writer, userId, createdAt, id }: ITweet) {
     const user = auth.currentUser;
     const [edit, setEdit] = useState(false);
     const [photoEdit, setPhotoEdit] = useState(false);
@@ -186,13 +186,13 @@ export default function Tweet({ photo, tweet, writer, userId, createAt, id }: IT
     const [file, setFile] = useState<File | null>(null);
     const [isLoading, setLoading] = useState(false);
     const createTime = () => {
-        const msc = Date.now() - createAt;
+        const msc = Date.now() - createdAt;
         if (msc / (1000 * 60) < 60) {
             return Math.floor(msc / (1000 * 60)) + "분 전";
         } else if (msc / (1000 * 60 * 60) < 24) {
             return Math.floor(msc / (1000 * 60 * 60)) + "시간 전";
         } else {
-            const now = new Date(createAt);
+            const now = new Date(createdAt);
             return now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일";
         }
     };

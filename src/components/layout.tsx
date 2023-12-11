@@ -6,15 +6,25 @@ const Wrapper = styled.div`
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 3fr 1.5fr;
-    grid-gap: 10px;
     padding: 0 50px;
 `;
+const Logo = styled.div`
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+`;
+const LogoImg = styled.img`
+    height: 100%;
+`;
 const MenuList = styled.div`
-    padding-top: 100px;
+    padding-top: 30px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    box-shadow: 5px 0px 7px -7px rgba(0, 0, 0, 0.5);
+    border-right: 1px solid rgba(200, 200, 200);
 `;
 const Menu = styled.div`
     width: 100%;
@@ -42,15 +52,39 @@ const MLink = styled(Link)`
     color: ${(props) => props.theme.text};
 `;
 const UserInfo = styled.div`
-    background-color: yellow;
     text-align: center;
-    justify-content: center;
+    display: flex;
+    justify-content: flex-start;
     align-items: center;
+    padding-left: 40px;
     font-size: 16px;
     margin-top: 50px;
+    gap: 10px;
+    span {
+        font-size: 16px;
+        font-weight: 700;
+    }
+`;
+const UserAvatar = styled.div`
+    background-color: ${(props) => props.theme.tweetBg};
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+        width: 25px;
+    }
+`;
+const AvatarImg = styled.img`
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
 `;
 const Recommendation = styled.div`
-    box-shadow: -5px 0px 7px -7px rgba(0, 0, 0, 0.5);
+    border-left: 1px solid rgba(200, 200, 200);
     width: 100%;
 `;
 
@@ -63,9 +97,13 @@ export default function Layout() {
             navigate("/login");
         }
     };
+    const user = auth.currentUser;
     return (
         <Wrapper>
             <MenuList>
+                <Logo>
+                    <LogoImg src="/free-sticker-window-4288987.png" />
+                </Logo>
                 <MLink to="/">
                     <Menu>
                         <svg
@@ -112,7 +150,27 @@ export default function Layout() {
                     </svg>
                     <span>로그아웃</span>
                 </Menu>
-                <UserInfo>사용자 : {auth.currentUser?.displayName ?? "익명"}</UserInfo>
+                <UserInfo>
+                    {user?.photoURL ? (
+                        <AvatarImg src={user?.photoURL} />
+                    ) : (
+                        <UserAvatar>
+                            <svg
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    clipRule="evenodd"
+                                    fillRule="evenodd"
+                                    d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+                                />
+                            </svg>
+                        </UserAvatar>
+                    )}
+                    <span>{user?.displayName ?? "익명"}</span>
+                </UserInfo>
             </MenuList>
             <Outlet />
             <Recommendation />
