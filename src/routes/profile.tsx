@@ -3,7 +3,7 @@ import { auth, db, storage } from "../firebase";
 import React, { useEffect, useState } from "react";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { updateProfile } from "firebase/auth";
-import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { ITweet } from "../components/timeline";
 import Tweet from "../components/tweet";
 import { useSetRecoilState } from "recoil";
@@ -20,17 +20,20 @@ const ProfileBox = styled.div`
     display: flex;
     justify-content: center;
 `;
-const ProfileBg = styled.div`
+const ProfileBgUpload = styled.label`
     position: absolute;
     top: 0;
     width: 100%;
     height: 200px;
     background-color: ${(props) => props.theme.inputBg};
 `;
-/*const ProfileBgImg = styled.img`
+const ProfileInput = styled.input`
+    display: none;
+`;
+const ProfileBgImg = styled.img`
     width: 100%;
     height: 200px;
-`;*/
+`;
 const AvatarUpload = styled.label`
     position: absolute;
     top: 100px;
@@ -140,6 +143,39 @@ export default function Profile() {
     const [tweets, setTweets] = useState<ITweet[]>([]);
     const [editOpen, setEditOpen] = useState(false);
     const [userName, setUserName] = useState(user?.displayName ?? "");
+    const [profileBg, setProfileBg] = useState("");
+    const profileCheck = async () => {
+        if (!user) return;
+        const docRef = doc(db, "profile", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            setProfileBg(docSnap.data().profileBgPhoto);
+        } else {
+            setProfileBg("");
+        }
+    };
+    const onProfileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        if (!user) return;
+        if (files && files.length === 1) {
+            const file = files[0];
+            if (file.size > 4194304) {
+                alert("파일크기가 4MB 이상입니다.");
+                return;
+            }
+            const locationRef = ref(storage, `profile/${user?.uid}`);
+            const result = await uploadBytes(locationRef, file);
+            const profileUrl = await getDownloadURL(result.ref);
+            setProfileBg(profileUrl);
+            const docRef = doc(db, "profile", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                await updateDoc(docRef, { profileBgPhoto: profileUrl });
+            } else {
+                await setDoc(doc(db, "profile", user.uid), { profileBgPhoto: profileUrl });
+            }
+        }
+    };
     const onAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
         if (!user) return;
@@ -174,6 +210,7 @@ export default function Profile() {
     };
     useEffect(() => {
         fetchTweets();
+        profileCheck();
     }, []);
     const nameEditOpen = () => {
         setEditOpen(true);
@@ -195,7 +232,15 @@ export default function Profile() {
     return (
         <Wrapper>
             <ProfileBox>
-                <ProfileBg></ProfileBg>
+                <ProfileBgUpload htmlFor="profile">
+                    <ProfileInput
+                        onChange={onProfileChange}
+                        id="profile"
+                        type="file"
+                        accept="image/*"
+                    />
+                    {profileBg === "" ? null : <ProfileBgImg src={profileBg} />}
+                </ProfileBgUpload>
                 <AvatarUpload htmlFor="avatar">
                     {avatar ? (
                         <AvatarImg src={avatar} />
