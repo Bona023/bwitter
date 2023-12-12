@@ -3,13 +3,16 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
 import Home from "./routes/home";
 import Profile from "./routes/profile";
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import Login from "./routes/login";
 import CreateAccount from "./routes/create-account";
 import Loading from "./components/loading-screen";
 import { auth } from "./firebase";
 import ProtectedRoute from "./components/protected-route";
+import { useRecoilValue } from "recoil";
+import { lightTheme, darkTheme } from "./theme";
+import { darkMode } from "./atom";
 
 const router = createBrowserRouter([
     {
@@ -69,11 +72,14 @@ function App() {
     useEffect(() => {
         init();
     }, []);
+    const isDark = useRecoilValue(darkMode);
     return (
-        <Wrapper>
-            <GlobalStyles />
-            {isLoading ? <Loading /> : <RouterProvider router={router} />}
-        </Wrapper>
+        <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+            <Wrapper>
+                <GlobalStyles />
+                {isLoading ? <Loading /> : <RouterProvider router={router} />}
+            </Wrapper>
+        </ThemeProvider>
     );
 }
 

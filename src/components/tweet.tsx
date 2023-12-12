@@ -170,7 +170,7 @@ const Icons = styled.div`
         color: ${(props) => props.theme.tweetIcon};
         stroke-width: 2.5px;
         &.tweetDel {
-            color: red;
+            color: ${(props) => props.theme.accentColor};
         }
         &:hover {
             color: ${(props) => props.theme.tweetAccent};

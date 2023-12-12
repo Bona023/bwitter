@@ -15,3 +15,19 @@ export const lightTheme: DefaultTheme = {
     myLikesTab: "#ff9494",
     myReplyTab: "#ffd9c0",
 };
+
+export const darkTheme: DefaultTheme = {
+    bodyBg: "#27374d",
+    text: "#e4f1ff",
+    btnBgNormal: "#526d82",
+    btnBgActive: "#E55604",
+    pointColor: "#9DB2BF",
+    inputBg: "#E79E4F",
+    accentColor: "#FF8400",
+    tweetBg: "#749BC2",
+    tweetIcon: "#F6F4EB",
+    tweetAccent: "#002B5B",
+    myTweetsTab: "#FFFEB7",
+    myLikesTab: "#ff9494",
+    myReplyTab: "#ffd9c0",
+};

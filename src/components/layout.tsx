@@ -1,11 +1,14 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { auth } from "../firebase";
+import { useRecoilState } from "recoil";
+import { darkMode } from "../atom";
 
 const Wrapper = styled.div`
     width: 100%;
+    max-width: 840px;
     display: grid;
-    grid-template-columns: 1fr 3fr 1.5fr;
+    grid-template-columns: 1fr 3fr;
     padding: 0 50px;
 `;
 const Logo = styled.div`
@@ -29,7 +32,7 @@ const MenuList = styled.div`
 const Menu = styled.div`
     width: 100%;
     margin-bottom: 10px;
-    padding: 5px 40px;
+    padding: 5px 25px;
     height: 40px;
     display: flex;
     justify-content: flex-start;
@@ -37,7 +40,7 @@ const Menu = styled.div`
     cursor: pointer;
     &:hover {
         background-color: ${(props) => props.theme.pointColor};
-        color: white;
+        color: ${(props) => props.theme.tweetAccent};
     }
     svg {
         width: 25px;
@@ -83,9 +86,25 @@ const AvatarImg = styled.img`
     height: 40px;
     border-radius: 50px;
 `;
-const Recommendation = styled.div`
-    border-left: 1px solid rgba(200, 200, 200);
-    width: 100%;
+const ModeSwitchBtn = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    background-color: ${(props) => props.theme.tweetIcon};
+    color: ${(props) => props.theme.tweetAccent};
+    padding: 10px 35px;
+    border-radius: 20px;
+    margin: 20px auto;
+    cursor: pointer;
+    &:hover {
+        opacity: 0.8;
+        scale: 0.8;
+    }
+    svg {
+        width: 20px;
+        margin-right: 5px;
+    }
 `;
 
 export default function Layout() {
@@ -96,6 +115,10 @@ export default function Layout() {
             await auth.signOut();
             navigate("/login");
         }
+    };
+    const [isDark, setIsDark] = useRecoilState(darkMode);
+    const modeSwitch = () => {
+        setIsDark((prev) => !prev);
     };
     const user = auth.currentUser;
     return (
@@ -150,6 +173,35 @@ export default function Layout() {
                     </svg>
                     <span>로그아웃</span>
                 </Menu>
+                {isDark ? (
+                    <ModeSwitchBtn onClick={modeSwitch}>
+                        <svg
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
+                            <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                        </svg>
+                        <span>light</span>
+                    </ModeSwitchBtn>
+                ) : (
+                    <ModeSwitchBtn onClick={modeSwitch}>
+                        <svg
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
+                            <path
+                                clipRule="evenodd"
+                                fillRule="evenodd"
+                                d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                            />
+                        </svg>
+                        <span>Dark</span>
+                    </ModeSwitchBtn>
+                )}
                 <UserInfo>
                     {user?.photoURL ? (
                         <AvatarImg src={user?.photoURL} />
@@ -173,7 +225,6 @@ export default function Layout() {
                 </UserInfo>
             </MenuList>
             <Outlet />
-            <Recommendation />
         </Wrapper>
     );
 }

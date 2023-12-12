@@ -105,8 +105,32 @@ const Tweets = styled.div`
     padding: 10px;
 `;
 const NameUpdateForm = styled.form``;
-const NameInput = styled.input``;
-const NameUpdate = styled.input``;
+const NameInput = styled.input`
+    font-family: "Sunflower", sans-serif;
+    font-size: 20px;
+    background-color: ${(props) => props.theme.inputBg};
+    color: ${(props) => props.theme.text};
+    border: none;
+    border-radius: 15px;
+    padding: 5px;
+    width: 100px;
+    text-align: center;
+    margin-right: 5px;
+    &:focus {
+        outline: none;
+    }
+`;
+const NameEditBtn = styled.input`
+    font-family: "Sunflower", sans-serif;
+    font-size: 16px;
+    background-color: transparent;
+    color: ${(props) => props.theme.text};
+    border: none;
+    cursor: pointer;
+    &:hover {
+        color: ${(props) => props.theme.accentColor};
+    }
+`;
 
 export default function Profile() {
     const user = auth.currentUser;
@@ -152,6 +176,9 @@ export default function Profile() {
     const nameEditOpen = () => {
         setEditOpen(true);
     };
+    const nameEditClose = () => {
+        setEditOpen(false);
+    };
     const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(e.target.value);
     };
@@ -191,23 +218,27 @@ export default function Profile() {
                 />
             </ProfileBox>
             <UserInfo>
-                <UserName>
-                    {editOpen ? (
-                        <NameUpdateForm onSubmit={nameSubmit}>
-                            <NameInput
-                                type="text"
-                                onChange={nameChange}
-                                value={userName}
-                            />
-                            <NameUpdate
-                                type="submit"
-                                value="수정"
-                            />
-                        </NameUpdateForm>
-                    ) : (
+                {editOpen ? (
+                    <NameUpdateForm onSubmit={nameSubmit}>
+                        <NameInput
+                            type="text"
+                            onChange={nameChange}
+                            value={userName}
+                        />
+                        <NameEditBtn
+                            type="submit"
+                            value="수정"
+                        />
+                        <span>/</span>
+                        <NameEditBtn
+                            onClick={nameEditClose}
+                            type="button"
+                            value="취소"
+                        />
+                    </NameUpdateForm>
+                ) : (
+                    <UserName>
                         <span>{user?.displayName ?? "Anonymous"}</span>
-                    )}
-                    {editOpen ? null : (
                         <svg
                             onClick={nameEditOpen}
                             fill="currentColor"
@@ -218,8 +249,8 @@ export default function Profile() {
                             <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z" />
                             <path d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z" />
                         </svg>
-                    )}
-                </UserName>
+                    </UserName>
+                )}
             </UserInfo>
             <TabButtons>
                 <ProfileTab className="myTweets">게시물</ProfileTab>
