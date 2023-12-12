@@ -2,7 +2,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { auth } from "../firebase";
 import { useRecoilState } from "recoil";
-import { darkMode } from "../atom";
+import { darkMode, usernameAtom } from "../atom";
 
 const Wrapper = styled.div`
     width: 100%;
@@ -121,6 +121,10 @@ export default function Layout() {
         setIsDark((prev) => !prev);
     };
     const user = auth.currentUser;
+    const [username, setUsername] = useRecoilState(usernameAtom);
+    if (user && user.displayName !== null) {
+        setUsername(user.displayName);
+    }
     return (
         <Wrapper>
             <MenuList>
@@ -221,7 +225,7 @@ export default function Layout() {
                             </svg>
                         </UserAvatar>
                     )}
-                    <span>{user?.displayName ?? "익명"}</span>
+                    <span>{username ?? "익명"}</span>
                 </UserInfo>
             </MenuList>
             <Outlet />

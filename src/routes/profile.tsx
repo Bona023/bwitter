@@ -6,6 +6,8 @@ import { updateProfile } from "firebase/auth";
 import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { ITweet } from "../components/timeline";
 import Tweet from "../components/tweet";
+import { useSetRecoilState } from "recoil";
+import { usernameAtom } from "../atom";
 
 const Wrapper = styled.div`
     overflow-x: scroll;
@@ -182,10 +184,12 @@ export default function Profile() {
     const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(e.target.value);
     };
+    const nameAtomChange = useSetRecoilState(usernameAtom);
     const nameSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!user) return;
         await updateProfile(user, { displayName: userName });
+        nameAtomChange(userName);
         setEditOpen(false);
     };
     return (
