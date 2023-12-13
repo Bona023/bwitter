@@ -65,10 +65,12 @@ export default function Login() {
                 />
             </Form>
             {error !== "" ? <Error>{error}</Error> : null}
-            <Switcher>
-                계정이 없나요? <Link to="/create-account">가입하러 가기 &rarr;</Link>
-            </Switcher>
+            <span style={{ marginTop: 20 }}>또는</span>
             <GithubButton />
+            <Switcher>
+                계정이 없나요?&nbsp;&nbsp;
+                <Link to="/create-account">가입하러 가기 &rarr;</Link>
+            </Switcher>
         </Wrapper>
     );
 }

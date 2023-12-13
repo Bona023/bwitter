@@ -3,7 +3,28 @@ import { useState } from "react";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
-import { Error, Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
+import { Error, Form, Input, Title, Wrapper } from "../components/auth-components";
+import styled from "styled-components";
+
+const GoLoginBtn = styled(Link)`
+    background-color: ${(props) => props.theme.btnBgNormal};
+    margin-top: 10px;
+    padding: 12px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    text-decoration: none;
+    color: ${(props) => props.theme.text};
+    &:hover {
+        background-color: ${(props) => props.theme.btnBgActive};
+        color: ${(props) => props.theme.tweetAccent};
+    }
+`;
 
 export default function CreateAccount() {
     const navigate = useNavigate();
@@ -75,9 +96,8 @@ export default function CreateAccount() {
                 />
             </Form>
             {error !== "" ? <Error>{error}</Error> : null}
-            <Switcher>
-                이미 계정이 있으신가요? <Link to="/login">Log in &rarr;</Link>
-            </Switcher>
+            <span style={{ marginTop: 30 }}>이미 계정이 있으신가요?</span>
+            <GoLoginBtn to="/login">로그인</GoLoginBtn>
         </Wrapper>
     );
 }
