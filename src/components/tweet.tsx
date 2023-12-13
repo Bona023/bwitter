@@ -4,6 +4,7 @@ import { ITweet } from "./timeline";
 import { auth, db, storage } from "../firebase";
 import { deleteDoc, deleteField, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
     background-color: ${(props) => props.theme.tweetBg};
@@ -186,6 +187,7 @@ const Icons = styled.div`
 
 export default function Tweet({ photo, tweet, writer, userId, userAvatar, createdAt, id }: ITweet) {
     const user = auth.currentUser;
+    const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
     const [photoEdit, setPhotoEdit] = useState(false);
     const [blah, setBlah] = useState(tweet);
@@ -290,6 +292,9 @@ export default function Tweet({ photo, tweet, writer, userId, userAvatar, create
             //
         }
     };
+    const moveTweetPage = () => {
+        navigate(id);
+    };
     return (
         <Wrapper>
             <UserProfile>{userAvatar ? <AvatarImg src={userAvatar} /> : <ProfileImg />}</UserProfile>
@@ -370,6 +375,7 @@ export default function Tweet({ photo, tweet, writer, userId, userAvatar, create
                     </svg>
                 ) : null}
                 <svg
+                    onClick={moveTweetPage}
                     fill="none"
                     stroke="currentColor"
                     strokeWidth={1.5}

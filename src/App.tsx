@@ -13,6 +13,8 @@ import ProtectedRoute from "./components/protected-route";
 import { useRecoilValue } from "recoil";
 import { lightTheme, darkTheme } from "./theme";
 import { darkMode } from "./atom";
+import TweetPage from "./routes/tweet-page";
+import ErrorPage from "./components/Error";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +32,11 @@ const router = createBrowserRouter([
             {
                 path: "profile",
                 element: <Profile />,
+            },
+            {
+                path: ":docId",
+                element: <TweetPage />,
+                errorElement: <ErrorPage />,
             },
         ],
     },
