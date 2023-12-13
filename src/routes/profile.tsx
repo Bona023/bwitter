@@ -26,6 +26,7 @@ const ProfileBgUpload = styled.label`
     width: 100%;
     height: 200px;
     background-color: ${(props) => props.theme.inputBg};
+    cursor: pointer;
 `;
 const ProfileInput = styled.input`
     display: none;
@@ -218,7 +219,7 @@ export default function Profile() {
     const nameEditClose = () => {
         setEditOpen(false);
     };
-    const nameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(e.target.value);
     };
     const nameAtomChange = useSetRecoilState(usernameAtom);
@@ -227,6 +228,12 @@ export default function Profile() {
         if (!user) return;
         await updateProfile(user, { displayName: userName });
         nameAtomChange(userName);
+        const myTweetQuery = query(collection(db, "tweets"), where("userId", "==", user?.uid));
+        const snapshot = getDocs(myTweetQuery);
+        (await snapshot).docs.map((item) => {
+            updateDoc(doc(db, "tweets", item.id), { writer: userName });
+        });
+        fetchTweets();
         setEditOpen(false);
     };
     return (
