@@ -1,8 +1,7 @@
-import { addDoc, collection, updateDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { useState } from "react";
 import styled from "styled-components";
-import { auth, db, storage } from "../firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, db } from "../firebase";
 
 const Form = styled.form`
     padding-top: 20px;
@@ -46,21 +45,6 @@ const BtnBox = styled.div`
         overflow: auto;
     }
 `;
-const AttachFileBtn = styled.label`
-    background-color: ${(props) => props.theme.btnBgNormal};
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 16px;
-    color: ${(props) => props.theme.text};
-    cursor: pointer;
-    &:hover {
-        background-color: ${(props) => props.theme.btnBgActive};
-        color: ${(props) => props.theme.tweetAccent};
-    }
-`;
-const AttachFileInput = styled.input`
-    display: none;
-`;
 const SubmitBtn = styled.input`
     font-size: 16px;
     font-family: "Sunflower", sans-serif;
@@ -77,44 +61,26 @@ const SubmitBtn = styled.input`
     }
 `;
 
-export default function ReplyForm() {
+export default function ReplyForm({ docId }: any) {
     const [isLoading, setLoading] = useState(false);
-    const [tweet, setTweet] = useState("");
-    const [file, setFile] = useState<File | null>(null);
+    const [reply, setReply] = useState("");
     const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setTweet(e.target.value);
-    };
-    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { files } = e.target;
-        if (files && files.length === 1) {
-            setFile(files[0]);
-        }
+        setReply(e.target.value);
     };
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const user = auth.currentUser;
-        if (!user || isLoading || tweet === "" || tweet.length > 180) return;
-        if (file && file.size > 2097152) {
-            alert("이미지 크기는 최대 2MB 입니다.");
-            return;
-        }
+        if (!user || isLoading || reply === "" || reply.length > 180) return;
         try {
             setLoading(true);
-            const doc = await addDoc(collection(db, "tweets"), {
-                tweet,
+            await addDoc(collection(db, `tweets/${docId}/replies`), {
+                reply,
                 createdAt: Date.now(),
                 writer: user.displayName || "Anonymous",
                 userId: user.uid,
                 userAvatar: user.photoURL,
             });
-            if (file) {
-                const locationRef = ref(storage, `tweets/${user.uid}/${doc.id}`);
-                const result = await uploadBytes(locationRef, file);
-                const url = await getDownloadURL(result.ref);
-                await updateDoc(doc, { photo: url });
-            }
-            setTweet("");
-            setFile(null);
+            setReply("");
         } catch (e) {
             console.log(e);
         } finally {
@@ -125,29 +91,16 @@ export default function ReplyForm() {
         <Form onSubmit={onSubmit}>
             <TextArea
                 required
-                rows={5}
+                rows={1}
                 maxLength={180}
                 onChange={onChange}
-                value={tweet}
-                placeholder="지금 무슨 일이 일어나고 있나요? (최대 180자)"
+                value={reply}
+                placeholder="댓글을 작성해 주세요."
             />
             <BtnBox>
-                {file ? (
-                    <span>
-                        파일명:{file.name} / 크기:
-                        {file.size < 1024 ? file.size + "bytes" : file.size < 1048576 ? (file.size / 1024).toFixed(1) + "KB" : file.size >= 1048576 ? (file.size / 1048576).toFixed(1) + "MB" : null}
-                    </span>
-                ) : null}
-                <AttachFileBtn htmlFor="file">이미지 추가</AttachFileBtn>
-                <AttachFileInput
-                    type="file"
-                    onChange={onFileChange}
-                    id="file"
-                    accept="image/*"
-                />
                 <SubmitBtn
                     type="submit"
-                    value={isLoading ? "포스팅 중..." : "게시하기"}
+                    value={isLoading ? "포스팅 중..." : "댓글 달기"}
                 />
             </BtnBox>
         </Form>

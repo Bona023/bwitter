@@ -5,14 +5,15 @@ import { db } from "../firebase";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { ITweet } from "../components/timeline";
+import ReplyForm from "../components/reply-form";
+import Replies from "../components/replies";
 
 const Wrapper = styled.div`
     display: grid;
-    gap: 40px;
-    grid-template-rows: 1fr 5fr;
+    grid-template-rows: 1fr 1fr 5fr;
     overflow-y: scroll;
+    background-color: ${(props) => props.theme.tweetBg};
 `;
-const Replies = styled.div``;
 
 export default function TweetPage() {
     const { docId } = useParams();
@@ -33,13 +34,9 @@ export default function TweetPage() {
     }, []);
     return (
         <Wrapper>
-            {docId === undefined ? null : (
-                <Tweet
-                    key={docId}
-                    {...tweetProp}
-                />
-            )}
-            <Replies />
+            <Tweet {...tweetProp} />
+            <ReplyForm docId={docId} />
+            <Replies docId={docId} />
         </Wrapper>
     );
 }
