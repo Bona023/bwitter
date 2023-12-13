@@ -2,7 +2,8 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { auth } from "../firebase";
 import { useRecoilState } from "recoil";
-import { darkMode, usernameAtom } from "../atom";
+import { darkMode, loginUserAvatarAtom, loginUserNameAtom } from "../atom";
+import { useEffect } from "react";
 
 const Wrapper = styled.div`
     width: 100%;
@@ -121,10 +122,14 @@ export default function Layout() {
         setIsDark((prev) => !prev);
     };
     const user = auth.currentUser;
-    const [username, setUsername] = useRecoilState(usernameAtom);
-    if (user && user.displayName !== null) {
-        setUsername(user.displayName);
-    }
+    const [username, setUsername] = useRecoilState(loginUserNameAtom);
+    const [userAvatar, setUserAvatar] = useRecoilState(loginUserAvatarAtom);
+    useEffect(() => {
+        if (user !== null) {
+            setUsername(user.displayName ?? "익명");
+            setUserAvatar(user.photoURL ?? "");
+        }
+    }, []);
     return (
         <Wrapper>
             <MenuList>
@@ -207,9 +212,7 @@ export default function Layout() {
                     </ModeSwitchBtn>
                 )}
                 <UserInfo>
-                    {user?.photoURL ? (
-                        <AvatarImg src={user?.photoURL} />
-                    ) : (
+                    {userAvatar === "" ? (
                         <UserAvatar>
                             <svg
                                 fill="currentColor"
@@ -224,8 +227,10 @@ export default function Layout() {
                                 />
                             </svg>
                         </UserAvatar>
+                    ) : (
+                        <AvatarImg src={userAvatar} />
                     )}
-                    <span>{username ?? "익명"}</span>
+                    <span>{username}</span>
                 </UserInfo>
             </MenuList>
             <Outlet />

@@ -4,8 +4,11 @@ export const darkMode = atom({
     key: "bwitter-darkMode",
     default: false,
 });
-
-export const usernameAtom = atom({
-    key: "bwitterLoginUser",
+export const loginUserNameAtom = atom({
+    key: "bwitterLoginUserName",
     default: "익명",
+});
+export const loginUserAvatarAtom = atom({
+    key: "bwitterLoginUserAvatar",
+    default: "",
 });

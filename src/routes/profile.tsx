@@ -7,7 +7,7 @@ import { collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, update
 import { ITweet } from "../components/timeline";
 import Tweet from "../components/tweet";
 import { useSetRecoilState } from "recoil";
-import { usernameAtom } from "../atom";
+import { loginUserAvatarAtom, loginUserNameAtom } from "../atom";
 
 const Wrapper = styled.div`
     overflow-x: scroll;
@@ -145,6 +145,8 @@ export default function Profile() {
     const [editOpen, setEditOpen] = useState(false);
     const [userName, setUserName] = useState(user?.displayName ?? "");
     const [profileBg, setProfileBg] = useState("");
+    const setAvatarAtom = useSetRecoilState(loginUserAvatarAtom);
+    const setUsernameAtom = useSetRecoilState(loginUserNameAtom);
     const profileCheck = async () => {
         if (!user) return;
         const docRef = doc(db, "profile", user.uid);
@@ -155,6 +157,27 @@ export default function Profile() {
             setProfileBg("");
         }
     };
+    const fetchTweets = async () => {
+        const tweetQuery = query(collection(db, "tweets"), where("userId", "==", user?.uid), orderBy("createdAt", "desc"), limit(25));
+        const snapshot = await getDocs(tweetQuery);
+        const tweets = snapshot.docs.map((doc) => {
+            const { tweet, createdAt, userId, userAvatar, writer, photo } = doc.data();
+            return {
+                tweet,
+                createdAt,
+                userAvatar,
+                userId,
+                writer,
+                photo,
+                id: doc.id,
+            };
+        });
+        setTweets(tweets);
+    };
+    useEffect(() => {
+        fetchTweets();
+        profileCheck();
+    }, []);
     const onProfileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
         if (!user) return;
@@ -189,30 +212,17 @@ export default function Profile() {
             const locationRef = ref(storage, `avatars/${user?.uid}`);
             const result = await uploadBytes(locationRef, file);
             const avatarUrl = await getDownloadURL(result.ref);
-            setAvatar(avatarUrl);
             await updateProfile(user, { photoURL: avatarUrl });
+            const myTweetQuery = query(collection(db, "tweets"), where("userId", "==", user?.uid));
+            const snapshot = getDocs(myTweetQuery);
+            (await snapshot).docs.map((item) => {
+                updateDoc(doc(db, "tweets", item.id), { userAvatar: avatarUrl });
+            });
+            setAvatarAtom(avatarUrl);
+            fetchTweets();
+            setAvatar(avatarUrl);
         }
     };
-    const fetchTweets = async () => {
-        const tweetQuery = query(collection(db, "tweets"), where("userId", "==", user?.uid), orderBy("createdAt", "desc"), limit(25));
-        const snapshot = await getDocs(tweetQuery);
-        const tweets = snapshot.docs.map((doc) => {
-            const { tweet, createdAt, userId, writer, photo } = doc.data();
-            return {
-                tweet,
-                createdAt,
-                userId,
-                writer,
-                photo,
-                id: doc.id,
-            };
-        });
-        setTweets(tweets);
-    };
-    useEffect(() => {
-        fetchTweets();
-        profileCheck();
-    }, []);
     const nameEditOpen = () => {
         setEditOpen(true);
     };
@@ -222,17 +232,16 @@ export default function Profile() {
     const nameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(e.target.value);
     };
-    const nameAtomChange = useSetRecoilState(usernameAtom);
     const nameSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!user) return;
         await updateProfile(user, { displayName: userName });
-        nameAtomChange(userName);
         const myTweetQuery = query(collection(db, "tweets"), where("userId", "==", user?.uid));
         const snapshot = getDocs(myTweetQuery);
         (await snapshot).docs.map((item) => {
             updateDoc(doc(db, "tweets", item.id), { writer: userName });
         });
+        setUsernameAtom(userName);
         fetchTweets();
         setEditOpen(false);
     };

@@ -42,7 +42,7 @@ const BtnBox = styled.div`
         font-size: 14px;
         font-weight: 300;
         max-height: 40px;
-        max-width: 550px;
+        max-width: 270px;
         overflow: auto;
     }
 `;
@@ -105,6 +105,7 @@ export default function PostTweetForm() {
                 createdAt: Date.now(),
                 writer: user.displayName || "Anonymous",
                 userId: user.uid,
+                userAvatar: user.photoURL,
             });
             if (file) {
                 const locationRef = ref(storage, `tweets/${user.uid}/${doc.id}`);

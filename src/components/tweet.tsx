@@ -24,6 +24,12 @@ const ProfileImg = styled.div`
     border-radius: 50%;
     margin-top: 10px;
 `;
+const AvatarImg = styled.img`
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-top: 10px;
+`;
 const Contents = styled.div`
     padding: 15px;
     width: 100%;
@@ -178,7 +184,7 @@ const Icons = styled.div`
     }
 `;
 
-export default function Tweet({ photo, tweet, writer, userId, createdAt, id }: ITweet) {
+export default function Tweet({ photo, tweet, writer, userId, userAvatar, createdAt, id }: ITweet) {
     const user = auth.currentUser;
     const [edit, setEdit] = useState(false);
     const [photoEdit, setPhotoEdit] = useState(false);
@@ -286,9 +292,7 @@ export default function Tweet({ photo, tweet, writer, userId, createdAt, id }: I
     };
     return (
         <Wrapper>
-            <UserProfile>
-                <ProfileImg />
-            </UserProfile>
+            <UserProfile>{userAvatar ? <AvatarImg src={userAvatar} /> : <ProfileImg />}</UserProfile>
             <Contents>
                 <NameAndTime>
                     <WriterName>{writer}</WriterName>

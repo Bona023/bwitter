@@ -11,6 +11,7 @@ export interface ITweet {
     tweet: string;
     writer: string;
     userId: string;
+    userAvatar?: string;
     createdAt: number;
 }
 
@@ -33,12 +34,13 @@ export default function Timeline() {
             const tweetsQuery = query(collection(db, "tweets"), orderBy("createdAt", "desc"), limit(25));
             unsubscribe = await onSnapshot(tweetsQuery, (snapshot) => {
                 const post = snapshot.docs.map((doc) => {
-                    const { photo, tweet, writer, userId, createdAt } = doc.data();
+                    const { photo, tweet, writer, userId, createdAt, userAvatar } = doc.data();
                     return {
                         photo,
                         tweet,
                         writer,
                         userId,
+                        userAvatar,
                         createdAt,
                         id: doc.id,
                     };
