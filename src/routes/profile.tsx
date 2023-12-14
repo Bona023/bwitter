@@ -178,6 +178,27 @@ export default function Profile() {
         });
         setTweets(tweets);
     };
+    /* 
+    const fetchLoveIt = async () => {
+        if (!user) return;
+        const tweetQuery = query(collection(db, "tweets"), where("loveIt", "array-contains", user.uid), orderBy("createdAt", "desc"), limit(25));
+        const snapshot = await getDocs(tweetQuery);
+        const tweets = snapshot.docs.map((doc) => {
+            const { tweet, createdAt, userId, userAvatar, writer, photo, loveIt } = doc.data();
+            return {
+                tweet,
+                createdAt,
+                userAvatar,
+                userId,
+                writer,
+                photo,
+                loveIt,
+                id: doc.id,
+            };
+        });
+        setTweets(tweets);
+    };
+    */
     useEffect(() => {
         fetchTweets();
         profileCheck();

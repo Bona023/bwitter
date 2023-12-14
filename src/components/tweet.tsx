@@ -306,7 +306,7 @@ export default function Tweet({ photo, tweet, writer, userId, userAvatar, create
         }
     };
     const moveTweetPage = () => {
-        navigate(id);
+        navigate(`/${id}`);
     };
     const loveItSwitcher = async () => {
         if (!user || isLoading) return;
