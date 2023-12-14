@@ -10,8 +10,9 @@ import { useSetRecoilState } from "recoil";
 import { loginUserAvatarAtom, loginUserNameAtom } from "../atom";
 
 const Wrapper = styled.div`
-    overflow-x: scroll;
+    overflow-y: scroll;
     position: relative;
+    min-width: 500px;
 `;
 const ProfileBox = styled.div`
     position: relative;
@@ -91,6 +92,8 @@ const TabButtons = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     margin-top: 30px;
+    border-top: 1px solid rgba(200, 200, 200, 0.7);
+    border-bottom: 1px solid rgba(200, 200, 200, 0.7);
 `;
 const ProfileTab = styled.div`
     text-align: center;
@@ -161,7 +164,7 @@ export default function Profile() {
         const tweetQuery = query(collection(db, "tweets"), where("userId", "==", user?.uid), orderBy("createdAt", "desc"), limit(25));
         const snapshot = await getDocs(tweetQuery);
         const tweets = snapshot.docs.map((doc) => {
-            const { tweet, createdAt, userId, userAvatar, writer, photo } = doc.data();
+            const { tweet, createdAt, userId, userAvatar, writer, photo, loveIt } = doc.data();
             return {
                 tweet,
                 createdAt,
@@ -169,6 +172,7 @@ export default function Profile() {
                 userId,
                 writer,
                 photo,
+                loveIt,
                 id: doc.id,
             };
         });

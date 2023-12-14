@@ -7,10 +7,10 @@ import { useEffect } from "react";
 
 const Wrapper = styled.div`
     width: 100%;
-    max-width: 840px;
+    max-width: 720px;
     display: grid;
     grid-template-columns: 1fr 3fr;
-    padding: 0 50px;
+    padding: 0 auto;
 `;
 const Logo = styled.div`
     width: 100%;
@@ -29,6 +29,7 @@ const MenuList = styled.div`
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgba(200, 200, 200);
+    width: 180px;
 `;
 const Menu = styled.div`
     width: 100%;

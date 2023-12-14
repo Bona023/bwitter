@@ -106,6 +106,7 @@ export default function PostTweetForm() {
                 writer: user.displayName || "Anonymous",
                 userId: user.uid,
                 userAvatar: user.photoURL,
+                loveIt: [],
             });
             if (file) {
                 const locationRef = ref(storage, `tweets/${user.uid}/${doc.id}`);

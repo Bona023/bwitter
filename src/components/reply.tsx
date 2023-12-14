@@ -14,6 +14,7 @@ const Wrapper = styled.div`
 const UserProfile = styled.div`
     display: flex;
     justify-content: end;
+    padding-left: 10px;
 `;
 const ProfileImg = styled.div`
     background-color: ${(props) => props.theme.pointColor};

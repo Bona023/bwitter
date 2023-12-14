@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ITweet } from "./timeline";
 import { auth, db, storage } from "../firebase";
@@ -13,10 +13,13 @@ const Wrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr 8fr 1fr;
     border-radius: 10px;
+    min-width: 430px;
 `;
 const UserProfile = styled.div`
     display: flex;
     justify-content: end;
+    padding-left: 10px;
+    min-width: 55px;
 `;
 const ProfileImg = styled.div`
     background-color: ${(props) => props.theme.pointColor};
@@ -185,7 +188,7 @@ const Icons = styled.div`
     }
 `;
 
-export default function Tweet({ photo, tweet, writer, userId, userAvatar, createdAt, id }: ITweet) {
+export default function Tweet({ photo, tweet, writer, userId, userAvatar, createdAt, id, loveIt }: ITweet) {
     const user = auth.currentUser;
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
@@ -193,6 +196,18 @@ export default function Tweet({ photo, tweet, writer, userId, userAvatar, create
     const [blah, setBlah] = useState(tweet);
     const [file, setFile] = useState<File | null>(null);
     const [isLoading, setLoading] = useState(false);
+    const [isLove, setLove] = useState(false);
+    const [loveArr, setLoveArr] = useState<string[]>([]);
+    const checkLoveIt = () => {
+        setLoveArr(loveIt);
+        if (!loveIt || loveArr.length === 0 || !user) return;
+        for (let i = 0; i < loveArr.length; i++) {
+            if (loveArr[i] === user.uid) setLove(true);
+        }
+    };
+    useEffect(() => {
+        checkLoveIt();
+    }, []);
     const createTime = () => {
         const msc = Date.now() - createdAt;
         if (msc / (1000 * 60) < 60) {
@@ -284,8 +299,6 @@ export default function Tweet({ photo, tweet, writer, userId, userAvatar, create
                 const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
                 await deleteObject(photoRef);
             }
-            const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
-            await deleteObject(photoRef);
         } catch (e) {
             console.log(e);
         } finally {
@@ -294,6 +307,46 @@ export default function Tweet({ photo, tweet, writer, userId, userAvatar, create
     };
     const moveTweetPage = () => {
         navigate(id);
+    };
+    const loveItSwitcher = async () => {
+        if (!user || isLoading) return;
+        if (isLove) {
+            try {
+                setLoading(true);
+                if (loveArr.length > 1) {
+                    const index = loveArr.indexOf(user.uid);
+                    const newArr = loveArr.splice(index, 1);
+                    await updateDoc(doc(db, "tweets", id), {
+                        loveIt: newArr,
+                    });
+                    setLoveArr(newArr);
+                } else {
+                    await updateDoc(doc(db, "tweets", id), {
+                        loveIt: [],
+                    });
+                    setLoveArr([]);
+                }
+                setLove(false);
+            } catch (e) {
+                console.log(e);
+            } finally {
+                setLoading(false);
+            }
+        } else if (!isLove) {
+            try {
+                setLoading(true);
+                const newArr = [...loveArr, user.uid];
+                await updateDoc(doc(db, "tweets", id), {
+                    loveIt: newArr,
+                });
+                setLoveArr(newArr);
+                setLove(true);
+            } catch (e) {
+                console.log(e);
+            } finally {
+                setLoading(false);
+            }
+        }
     };
     return (
         <Wrapper>
@@ -360,7 +413,8 @@ export default function Tweet({ photo, tweet, writer, userId, userAvatar, create
             <Icons>
                 {user?.uid !== userId ? (
                     <svg
-                        fill="none"
+                        onClick={loveItSwitcher}
+                        fill={isLove ? "red" : "none"}
                         stroke="currentColor"
                         strokeWidth={1.5}
                         viewBox="0 0 24 24"
