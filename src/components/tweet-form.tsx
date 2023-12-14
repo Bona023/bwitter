@@ -94,7 +94,7 @@ export default function PostTweetForm() {
         e.preventDefault();
         const user = auth.currentUser;
         if (!user || isLoading || tweet === "" || tweet.length > 180) return;
-        if (file && file.size > 2097152) {
+        if (file && file.size > 2 * 1024 * 1024) {
             alert("이미지 크기는 최대 2MB 입니다.");
             return;
         }

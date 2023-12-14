@@ -208,8 +208,8 @@ export default function Profile() {
         if (!user) return;
         if (files && files.length === 1) {
             const file = files[0];
-            if (file.size > 4194304) {
-                alert("파일크기가 4MB 이상입니다.");
+            if (file.size > 2 * 1024 * 1024) {
+                alert("파일크기가 2MB 이상입니다.");
                 return;
             }
             const locationRef = ref(storage, `profile/${user?.uid}`);
@@ -230,8 +230,8 @@ export default function Profile() {
         if (!user) return;
         if (files && files.length === 1) {
             const file = files[0];
-            if (file.size > 4194304) {
-                alert("파일크기가 4MB 이상입니다.");
+            if (file.size > 2 * 1024 * 1024) {
+                alert("파일크기가 2MB 이상입니다.");
                 return;
             }
             const locationRef = ref(storage, `avatars/${user?.uid}`);

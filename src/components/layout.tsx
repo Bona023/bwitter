@@ -118,7 +118,7 @@ export default function Layout() {
             navigate("/login");
         }
     };
-    const [isDark, setIsDark] = useRecoilState(darkMode);
+    const [isDark, setIsDark] = useRecoilState<boolean>(darkMode);
     const modeSwitch = () => {
         setIsDark((prev) => !prev);
     };

@@ -23,8 +23,8 @@ export default function TweetPage() {
         const docRef = doc(db, "tweets", docId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-            const { photo, tweet, writer, userId, userAvatar, createdAt } = docSnap.data();
-            setTweetProp({ photo, tweet, writer, userId, userAvatar, createdAt, id: docId });
+            const { photo, tweet, writer, userId, userAvatar, createdAt, loveIt } = docSnap.data();
+            setTweetProp({ photo, tweet, writer, userId, userAvatar, createdAt, loveIt, id: docId });
         } else {
             console.log("No such document!");
         }
@@ -34,7 +34,7 @@ export default function TweetPage() {
     }, []);
     return (
         <Wrapper>
-            <Tweet {...tweetProp} />
+            {tweetProp === undefined ? null : <Tweet {...tweetProp} />}
             <ReplyForm docId={docId} />
             <Replies docId={docId} />
         </Wrapper>
